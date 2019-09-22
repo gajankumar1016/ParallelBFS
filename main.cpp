@@ -48,7 +48,7 @@ void test_graph(const Graph &g) {
 
 
 int main() {
-  RandomGraphGenerator rg(5000, 0.15);
+  RandomGraphGenerator rg(2000, 0.15);
   Graph *g = rg.generateGraph();
   test_graph(*g);
   delete g;

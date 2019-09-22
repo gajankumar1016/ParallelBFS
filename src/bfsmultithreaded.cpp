@@ -72,7 +72,10 @@ void BFSMultithreaded::performMultithreadedBFS(const Graph &g, Vertex src) {
   for (auto &bfst : bfsthreads) {
     bfst->wait_until_stopped();
   }
-  //TODO: delete threads
+  for (auto &th : bfsthreads) {
+    delete th;
+    th = nullptr;
+  }
 }
 
 bool BFSMultithreaded::hasPathTo(Vertex dest) {
