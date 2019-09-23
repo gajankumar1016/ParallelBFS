@@ -43,6 +43,12 @@ class BFSMultithreaded {
 
 };
 
+/**
+ * Barrier was copied from the following link.
+ * https://stackoverflow.com/questions/32986572/c-main-thread-notifying-threads-notifying-main-thread
+ *
+ * Was originally in C++ Concurrency in Action by Anthony Williams
+ */
 class barrier
 {
   unsigned const count;
@@ -77,7 +83,6 @@ class BFSThread {
   std::atomic<bool> _next_batch;
 
  public:
-  //TODO: what does _th() do?
   BFSThread(int id, BFSMultithreaded *bfs_context) : _id(id), _next_batch(false),_bfs_context(bfs_context){};
   void process_frontier_batch() {_next_batch = true;}
   void start(const Graph &g, barrier& b) {
@@ -108,13 +113,17 @@ class BFSThread {
       //Update frontier
       for (const auto &curr_vertex : _bfs_context->frontier_partition[_id]) {
         for (const Vertex& v : g.getAdjacent(curr_vertex)) {
+          (*_bfs_context->mtxes)[v].lock();
           if (!_bfs_context->visited[v]) {
             _bfs_context->visited[v] = true;
             _bfs_context->edgeTo[v] = curr_vertex;
+            (*_bfs_context->mtxes)[v].unlock();
 
             _bfs_context->next_level_lock.lock();
             _bfs_context->next_level.push_back(v);
             _bfs_context->next_level_lock.unlock();
+          } else {
+            (*_bfs_context->mtxes)[v].unlock();
           }
         }
       }

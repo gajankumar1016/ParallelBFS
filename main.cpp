@@ -30,7 +30,7 @@ void test_graph(const Graph &g) {
     std::cout << std::endl;
   }
 
-  size_t num_threads = 15;
+  size_t num_threads = 8;
   const auto start_time_mt = high_resolution_clock::now();
   BFSMultithreaded bfsMultithreaded(g, 0, num_threads);
   const auto end_time_mt = high_resolution_clock::now();
@@ -48,7 +48,7 @@ void test_graph(const Graph &g) {
 
 
 int main() {
-  RandomGraphGenerator rg(2000, 0.15);
+  RandomGraphGenerator rg(7000, 0.2);
   Graph *g = rg.generateGraph();
   test_graph(*g);
   delete g;
